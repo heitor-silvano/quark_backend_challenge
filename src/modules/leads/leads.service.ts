@@ -1,26 +1,28 @@
 import { Injectable } from '@nestjs/common';
 import { CreateLeadDto } from './dto/create-lead.dto';
 import { UpdateLeadDto } from './dto/update-lead.dto';
+import { LeadsRepository } from './leads.repository';
 
 @Injectable()
 export class LeadsService {
-  create(createLeadDto: CreateLeadDto) {
-    return 'This action adds a new lead';
+  constructor(private readonly leadsRepository: LeadsRepository) {}
+  async create(createLeadDto: CreateLeadDto) {
+    return await this.leadsRepository.create(createLeadDto)
   }
 
-  findAll() {
-    return `This action returns all leads`;
+  async findAll() {
+    return await this.leadsRepository.findAll()
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} lead`;
+  async findOne(id: string) {
+    return await this.leadsRepository.findById(id);
   }
 
-  update(id: number, updateLeadDto: UpdateLeadDto) {
-    return `This action updates a #${id} lead`;
+  async update(id: string, updateLeadDto: UpdateLeadDto) {
+    return await this.leadsRepository.update(id, updateLeadDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} lead`;
+  async remove(id: string) {
+    return await this.leadsRepository.softDelete(id);
   }
 }
