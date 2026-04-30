@@ -1,0 +1,41 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum lead_source {
+  WEBSITE
+  REFERRAL
+  PAID_ADS
+  ORGANIC
+  OTHER
+}
+
+model Lead {
+  id             String      @id @default(uuid())
+  fullName       String      @map("full_name") @db.VarChar(100)
+  email          String      @unique @db.VarChar(255)
+  phone          String      @db.VarChar(20)
+  companyName    String      @map("company_name") @db.VarChar(150)
+  companyCnpj    String      @unique @map("company_cnpj") @db.VarChar(14)
+  companyWebsite String?     @map("company_website") @db.VarChar(255)
+  estimatedValue Decimal?    @map("estimated_value") @db.Decimal(12, 2)
+  source         lead_source
+  notes          String?     @db.VarChar(500)
+  createdAt      DateTime    @default(now()) @map("created_at")
+  createdBy      String?     @map("created_by") @db.VarChar(100)
+  updatedAat     DateTime    @updatedAt @map("updated_at")
+  updatedBy      String?     @map("updated_by") @db.VarChar(100)
+  deletedAt      DateTime?   @map("deleted_at")
+
+  @@index([companyCnpj])
+  @@map("leads")
+}
