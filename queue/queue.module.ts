@@ -1,8 +1,33 @@
 import { Module } from '@nestjs/common';
 import { QueueService } from './queue.service';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
-  controllers: [],
-  providers: [QueueService],
+  imports: [
+    ClientsModule.register([
+      {
+        name: 'ENRICHMENT_QUEUE',
+        transport: Transport.RMQ,
+        options: {
+          urls: ['amqp://localhost:5672'],
+          queue: 'leads_enrichment_queue',
+          queueOptions: {
+            durable: false
+          },
+        },
+      }, {
+        name: 'CLASSIFICATION_QUEUE',
+        transport: Transport.RMQ,
+        options: {
+          urls: ['amqp://localhost:5672'],
+          queue: 'leads_classification_queue',
+          queueOptions: {
+            durable: false
+          },
+        },
+      },
+    ],),
+  ], providers: [QueueService],
+  exports: [QueueService]
 })
-export class QueueModule {}
+export class QueueModule { }

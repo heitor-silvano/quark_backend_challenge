@@ -5,7 +5,7 @@ import { UpdateLeadDto } from './dto/update-lead.dto';
 
 @Controller('leads')
 export class LeadsController {
-  constructor(private readonly leadsService: LeadsService) {}
+  constructor(private readonly leadsService: LeadsService) { }
 
   @Post()
   async create(@Body() createLeadDto: CreateLeadDto) {
@@ -30,5 +30,15 @@ export class LeadsController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.leadsService.remove(id);
+  }
+
+  @Post(':id/enrichment')
+  async enrichment(@Param('id') id: string) {
+    return await this.leadsService.enrich(id);
+  }
+
+  @Post(':id/classification')
+  async classification(@Param('id') id: string) {
+    return await this.leadsService.classify(id);
   }
 }
