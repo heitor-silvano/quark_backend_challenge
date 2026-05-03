@@ -4,7 +4,7 @@ import { ClassificationService } from "../../modules/classification/classificati
 
 @Controller()
 export class ClassificationConsumer {
-  constructor(private readonly service: ClassificationService) { }
+  constructor(private readonly classificationService: ClassificationService) { }
 
   @EventPattern('lead.classification')
   async handle(
@@ -14,7 +14,7 @@ export class ClassificationConsumer {
     const channel = context.getChannelRef();
     const message = context.getMessage();
     try {
-      await this.service.execute(data.leadId);
+      await this.classificationService.execute(data.leadId);
       channel.ack(message);
     } catch (err) {
       channel.nack(message, false, false);
