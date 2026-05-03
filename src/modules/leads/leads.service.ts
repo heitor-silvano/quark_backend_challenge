@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateLeadDto } from './dto/create-lead.dto';
 import { UpdateLeadDto } from './dto/update-lead.dto';
 import { LeadsRepository } from './leads.repository';
-import { QueueService } from 'queue/queue.service';
+import { QueueService } from '../../queue/queue.service';
 
 @Injectable()
 export class LeadsService {

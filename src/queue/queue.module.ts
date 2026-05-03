@@ -12,22 +12,24 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
           urls: ['amqp://localhost:5672'],
           queue: 'leads_enrichment_queue',
           queueOptions: {
-            durable: false
+            durable: true,
           },
         },
-      }, {
+      },
+      {
         name: 'CLASSIFICATION_QUEUE',
         transport: Transport.RMQ,
         options: {
           urls: ['amqp://localhost:5672'],
           queue: 'leads_classification_queue',
           queueOptions: {
-            durable: false
+            durable: true,
           },
         },
       },
-    ],),
-  ], providers: [QueueService],
-  exports: [QueueService]
+    ]),
+  ],
+  providers: [QueueService],
+  exports: [QueueService],
 })
 export class QueueModule { }

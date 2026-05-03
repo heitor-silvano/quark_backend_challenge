@@ -34,7 +34,13 @@ export class LeadsController {
 
   @Post(':id/enrichment')
   async enrichment(@Param('id') id: string) {
-    return await this.leadsService.enrich(id);
+    await this.leadsService.enrich(id);
+
+    return {
+      message: 'Enrichment has been successfully queued',
+      leadId: id,
+      status: 'PENDING',
+    };
   }
 
   @Post(':id/classification')
