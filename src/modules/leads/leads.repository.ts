@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Lead, Prisma } from '@prisma/client';
 import { PrismaService } from '../../../prisma/prisma.service';
+import { FilterLeadDto } from './dto/filter-lead.dto';
 
 @Injectable()
 export class LeadsRepository {
@@ -19,10 +20,29 @@ export class LeadsRepository {
     });
   }
 
-  async findAll(): Promise<Lead[]> {
+  async findAll(filters?: FilterLeadDto): Promise<Lead[]> {
     return this.prisma.lead.findMany({
       where: {
         deletedAt: null,
+        ...(filters?.fullName && {
+          fullName: { contains: filters.fullName, mode: 'insensitive' },
+        }),
+        ...(filters?.companyName && {
+          companyName: { contains: filters.companyName, mode: 'insensitive' },
+        }),
+        ...(filters?.source && {
+          source: filters.source,
+        }),
+        ...(filters?.enrichmentStatus && {
+          leadEnrichments: {
+            some: { status: filters.enrichmentStatus },
+          },
+        }),
+        ...(filters?.classificationStatus && {
+          leadClassifications: {
+            some: { status: filters.classificationStatus },
+          },
+        }),
       },
     });
   }

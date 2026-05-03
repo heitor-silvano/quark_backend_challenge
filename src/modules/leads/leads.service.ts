@@ -3,6 +3,7 @@ import { CreateLeadDto } from './dto/create-lead.dto';
 import { UpdateLeadDto } from './dto/update-lead.dto';
 import { LeadsRepository } from './leads.repository';
 import { QueueService } from '../../queue/queue.service';
+import { FilterLeadDto } from './dto/filter-lead.dto';
 
 @Injectable()
 export class LeadsService {
@@ -11,8 +12,8 @@ export class LeadsService {
     return await this.leadsRepository.create(createLeadDto)
   }
 
-  async findAll() {
-    return await this.leadsRepository.findAll()
+  async findAll(filters?: FilterLeadDto) {
+    return this.leadsRepository.findAll(filters);
   }
 
   async findOne(id: string) {

@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Header, StreamableFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Header, StreamableFile, Query } from '@nestjs/common';
 import { LeadsService } from './leads.service';
 import { CreateLeadDto } from './dto/create-lead.dto';
 import { UpdateLeadDto } from './dto/update-lead.dto';
 import { Readable } from 'stream';
+import { FilterLeadDto } from './dto/filter-lead.dto';
 
 @Controller('leads')
 export class LeadsController {
@@ -23,8 +24,8 @@ export class LeadsController {
   }
 
   @Get()
-  findAll() {
-    return this.leadsService.findAll();
+  findAll(@Query() filters: FilterLeadDto) {
+    return this.leadsService.findAll(filters);
   }
 
   @Get(':id')
