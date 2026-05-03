@@ -35,6 +35,16 @@ services:
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
 
+  mock-api:
+    build:
+      context: ./mock-api
+    container_name: leads-mock-api
+    restart: always
+    ports:
+      - "3001:3001"
+    environment:
+      PORT: 3001
+
 volumes:
   postgres_data:
   rabbitmq_data:
