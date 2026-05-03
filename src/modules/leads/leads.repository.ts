@@ -42,4 +42,34 @@ export class LeadsRepository {
       },
     });
   }
+
+  async findEnrichments(leadId: string) {
+    return this.prisma.leadEnrichment.findMany({
+      where: { leadId },
+      orderBy: { requestedAt: 'desc' },
+    });
+  }
+
+  async findClassifications(leadId: string) {
+    return this.prisma.leadClassification.findMany({
+      where: { leadId },
+      orderBy: { requestedAt: 'desc' },
+    });
+  }
+
+  async findAllForExport() {
+    return this.prisma.lead.findMany({
+      where: { deletedAt: null },
+      include: {
+        leadEnrichments: {
+          orderBy: { requestedAt: 'desc' },
+          take: 1,
+        },
+        leadClassifications: {
+          orderBy: { requestedAt: 'desc' },
+          take: 1,
+        },
+      },
+    });
+  }
 }

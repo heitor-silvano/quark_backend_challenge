@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Header, StreamableFile } from '@nestjs/common';
 import { LeadsService } from './leads.service';
 import { CreateLeadDto } from './dto/create-lead.dto';
 import { UpdateLeadDto } from './dto/update-lead.dto';
+import { Readable } from 'stream';
 
 @Controller('leads')
 export class LeadsController {
@@ -10,6 +11,15 @@ export class LeadsController {
   @Post()
   async create(@Body() createLeadDto: CreateLeadDto) {
     return await this.leadsService.create(createLeadDto);
+  }
+
+  @Get('export')
+  @Header('Content-Type', 'text/csv')
+  @Header('Content-Disposition', 'attachment; filename="leads.csv"')
+  async export(): Promise<StreamableFile> {
+    const csv = await this.leadsService.exportCsv();
+    const stream = Readable.from([csv]);
+    return new StreamableFile(stream);
   }
 
   @Get()
@@ -32,10 +42,14 @@ export class LeadsController {
     return this.leadsService.remove(id);
   }
 
+  @Get(':id/enrichments')
+  async enrichments(@Param('id') id: string) {
+    return this.leadsService.getEnrichments(id);
+  }
+
   @Post(':id/enrichment')
   async enrichment(@Param('id') id: string) {
     await this.leadsService.enrich(id);
-
     return {
       message: 'Enrichment has been successfully queued',
       leadId: id,
@@ -43,8 +57,18 @@ export class LeadsController {
     };
   }
 
+  @Get(':id/classifications')
+  async classifications(@Param('id') id: string) {
+    return this.leadsService.getClassifications(id);
+  }
+
   @Post(':id/classification')
   async classification(@Param('id') id: string) {
-    return await this.leadsService.classify(id);
+    await this.leadsService.classify(id);
+    return {
+      message: 'Classification has been successfully queued',
+      leadId: id,
+      status: 'PENDING',
+    };
   }
 }
