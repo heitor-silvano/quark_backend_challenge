@@ -10,12 +10,14 @@ export class QueueService {
   ) { }
 
   async publishEnrichment(leadId: string) {
-    return await lastValueFrom (
+    return await lastValueFrom(
       this.enrichmentClient.emit('lead.enrichment', { leadId })
     )
   }
 
   async publishClassification(leadId: string) {
-    return this.classificationService.emit('lead.classification', { leadId });
+    return await lastValueFrom(
+      this.classificationService.emit('lead.classification', { leadId })
+    )
   }
 }
