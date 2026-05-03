@@ -14,7 +14,7 @@ function calculateVerifierDigit(cnpj: string, length: number): number {
   return sum % 11 < 2 ? 0 : 11 - (sum % 11);
 }
 
-function validateCnpj(cnpj: string): boolean {
+export function validateCnpj(cnpj: string): boolean {
   if (!/^\d{14}$/.test(cnpj)) return false;
   if (hasOnlyRepeatedDigits(cnpj)) return false;
 
