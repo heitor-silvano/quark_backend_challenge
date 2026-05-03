@@ -21,6 +21,8 @@ export class LeadsService {
   }
 
   async update(id: string, data: UpdateLeadDto) {
+    const lead = await this.leadsRepository.findById(id);
+    if (!lead) throw new NotFoundException(`Lead ${id} was not found`);
     return await this.leadsRepository.update(id, data);
   }
 
@@ -29,11 +31,15 @@ export class LeadsService {
   }
 
   async enrich(leadId: string) {
-    return await this.queueService.publishEnrichment(leadId)
+    const lead = await this.leadsRepository.findById(leadId);
+    if (!lead) throw new NotFoundException(`Lead ${leadId} was not found`);
+    return this.queueService.publishEnrichment(leadId);
   }
 
   async classify(leadId: string) {
-    return await this.queueService.publishClassification(leadId)
+    const lead = await this.leadsRepository.findById(leadId);
+    if (!lead) throw new NotFoundException(`Lead ${leadId} was not found`);
+    return this.queueService.publishClassification(leadId);
   }
 
   async getEnrichments(leadId: string) {

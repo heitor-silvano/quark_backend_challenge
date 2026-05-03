@@ -12,6 +12,19 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  postgres-test:
+    image: postgres:15
+    container_name: leads-postgres-test
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: backend_challenge_test
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+
   ollama:
     image: ollama/ollama:latest
     container_name: ollama
@@ -20,8 +33,6 @@ services:
       - "11434:11434"
     volumes:
       - ollama_data:/root/.ollama
-    environment:
-      - OLLAMA_URL: http://ollama:11434
 
 
   rabbitmq:
@@ -49,5 +60,6 @@ services:
 
 volumes:
   postgres_data:
+  postgres_test_data:
   rabbitmq_data:
   ollama_data:
