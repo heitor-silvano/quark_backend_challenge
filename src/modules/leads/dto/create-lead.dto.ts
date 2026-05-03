@@ -1,6 +1,7 @@
 import { IsEmail, IsEnum, IsString, Length, Matches } from 'class-validator';
 import { lead_source } from '@prisma/client';
 import { BaseLeadDto } from './base-lead.dto';
+import { IsValidCnpj } from '../validators/cnpj.validator';
 
 export class CreateLeadDto extends BaseLeadDto {
   @IsString()
@@ -19,7 +20,7 @@ export class CreateLeadDto extends BaseLeadDto {
   declare companyName: string;
 
   @IsString()
-  @Matches(/^\d{14}$/, { message: 'companyCnpj must have 14 digits' })
+  @IsValidCnpj()
   declare companyCnpj: string;
 
   @IsEnum(lead_source)
