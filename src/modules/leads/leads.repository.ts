@@ -5,7 +5,7 @@ import { FilterLeadDto } from './dto/filter-lead.dto';
 
 @Injectable()
 export class LeadsRepository {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   async create(data: Prisma.LeadCreateInput): Promise<Lead> {
     return this.prisma.lead.create({ data });
@@ -49,7 +49,7 @@ export class LeadsRepository {
 
   async update(id: string, data: Prisma.LeadUpdateInput): Promise<Lead> {
     return this.prisma.lead.update({
-      where: { id },
+      where: { id, deletedAt: null },
       data,
     });
   }

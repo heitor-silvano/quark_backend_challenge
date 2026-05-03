@@ -1,5 +1,4 @@
 import {
-  IsEmail,
   IsEnum,
   IsNumber,
   IsOptional,
@@ -11,17 +10,12 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { lead_source } from '@prisma/client';
-import { IsValidCnpj } from '../validators/cnpj.validator';
 
 export class BaseLeadDto {
   @IsOptional()
   @IsString()
   @Length(3, 100)
   fullName?: string;
-
-  @IsOptional()
-  @IsEmail()
-  email?: string;
 
   @IsOptional()
   @IsString()
@@ -32,11 +26,6 @@ export class BaseLeadDto {
   @IsString()
   @Length(2, 150)
   companyName?: string;
-
-  @IsOptional()
-  @IsString()
-  @IsValidCnpj()
-  companyCnpj?: string;
 
   @IsOptional()
   @IsUrl()

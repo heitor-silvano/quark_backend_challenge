@@ -20,8 +20,8 @@ export class LeadsService {
     return await this.leadsRepository.findById(id);
   }
 
-  async update(id: string, updateLeadDto: UpdateLeadDto) {
-    return await this.leadsRepository.update(id, updateLeadDto);
+  async update(id: string, data: UpdateLeadDto) {
+    return await this.leadsRepository.update(id, data);
   }
 
   async remove(id: string) {
