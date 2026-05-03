@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateLeadDto } from './dto/create-lead.dto';
 import { UpdateLeadDto } from './dto/update-lead.dto';
 import { LeadsRepository } from './leads.repository';
@@ -33,5 +33,62 @@ export class LeadsService {
 
   async classify(leadId: string) {
     return await this.queueService.publishClassification(leadId)
+  }
+
+  async getEnrichments(leadId: string) {
+    const lead = await this.leadsRepository.findById(leadId);
+    if (!lead) throw new NotFoundException(`Lead ${leadId} was not found`);
+    return this.leadsRepository.findEnrichments(leadId);
+  }
+
+  async getClassifications(leadId: string) {
+    const lead = await this.leadsRepository.findById(leadId);
+    if (!lead) throw new NotFoundException(`Lead ${leadId} was not found`);
+    return this.leadsRepository.findClassifications(leadId);
+  }
+
+  async exportCsv(): Promise<string> {
+    const leads = await this.leadsRepository.findAllForExport();
+
+    const headers = [
+      'id', 'fullName', 'email', 'phone', 'companyName', 'companyCnpj',
+      'companyWebsite', 'estimatedValue', 'source', 'notes',
+      'enrichmentStatus', 'enrichmentCompletedAt',
+      'classificationScore', 'classificationLabel',
+      'classificationPotential', 'classificationCompletedAt',
+    ].join(',');
+
+    const rows = leads.map((lead) => {
+      const enrichment = lead.leadEnrichments[0] ?? null;
+      const classification = lead.leadClassifications[0] ?? null;
+
+      return [
+        lead.id,
+        this.escapeCsv(lead.fullName),
+        this.escapeCsv(lead.email),
+        this.escapeCsv(lead.phone),
+        this.escapeCsv(lead.companyName),
+        lead.companyCnpj,
+        this.escapeCsv(lead.companyWebsite ?? ''),
+        lead.estimatedValue?.toString() ?? '',
+        lead.source,
+        this.escapeCsv(lead.notes ?? ''),
+        enrichment?.status ?? '',
+        enrichment?.completedAt?.toISOString() ?? '',
+        classification?.score?.toString() ?? '',
+        classification?.classification ?? '',
+        classification?.commercialPotential ?? '',
+        classification?.completedAt?.toISOString() ?? '',
+      ].join(',');
+    });
+
+    return [headers, ...rows].join('\n');
+  }
+
+  private escapeCsv(value: string): string {
+    if (value.includes(',') || value.includes('"') || value.includes('\n')) {
+      return `"${value.replace(/"/g, '""')}"`;
+    }
+    return value;
   }
 }
