@@ -11,6 +11,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { lead_source } from '@prisma/client';
+import { IsValidCnpj } from '../validators/cnpj.validator';
 
 export class BaseLeadDto {
   @IsOptional()
@@ -34,7 +35,7 @@ export class BaseLeadDto {
 
   @IsOptional()
   @IsString()
-  @Matches(/^\d{14}$/, { message: 'companyCnpj must have 14 digits' })
+  @IsValidCnpj()
   companyCnpj?: string;
 
   @IsOptional()
