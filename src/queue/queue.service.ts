@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
+import { lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class QueueService {
@@ -9,7 +10,9 @@ export class QueueService {
   ) { }
 
   async publishEnrichment(leadId: string) {
-    this.enrichmentClient.emit('lead.enrichment', { leadId })
+    return await lastValueFrom (
+      this.enrichmentClient.emit('lead.enrichment', { leadId })
+    )
   }
 
   async publishClassification(leadId: string) {

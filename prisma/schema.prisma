@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -19,23 +14,59 @@ enum lead_source {
   OTHER
 }
 
+enum enrichment_status {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
 model Lead {
-  id             String      @id @default(uuid())
-  fullName       String      @map("full_name") @db.VarChar(100)
-  email          String      @unique @db.VarChar(255)
-  phone          String      @db.VarChar(20)
-  companyName    String      @map("company_name") @db.VarChar(150)
-  companyCnpj    String      @unique @map("company_cnpj") @db.VarChar(14)
-  companyWebsite String?     @map("company_website") @db.VarChar(255)
-  estimatedValue Decimal?    @map("estimated_value") @db.Decimal(12, 2)
-  source         lead_source
-  notes          String?     @db.VarChar(500)
-  createdAt      DateTime    @default(now()) @map("created_at")
-  createdBy      String?     @map("created_by") @db.VarChar(100)
-  updatedAat     DateTime    @updatedAt @map("updated_at")
-  updatedBy      String?     @map("updated_by") @db.VarChar(100)
-  deletedAt      DateTime?   @map("deleted_at")
+  id              String           @id @default(uuid())
+  fullName        String           @map("full_name") @db.VarChar(100)
+  email           String           @unique @db.VarChar(255)
+  phone           String           @db.VarChar(20)
+  companyName     String           @map("company_name") @db.VarChar(150)
+  companyCnpj     String           @unique @map("company_cnpj") @db.VarChar(14)
+  companyWebsite  String?          @map("company_website") @db.VarChar(255)
+  estimatedValue  Decimal?         @map("estimated_value") @db.Decimal(12, 2)
+  source          lead_source
+  notes           String?          @db.VarChar(500)
+  createdAt       DateTime         @default(now()) @map("created_at")
+  createdBy       String?          @map("created_by") @db.VarChar(100)
+  updatedAt      DateTime         @updatedAt @map("updated_at")
+  updatedBy       String?          @map("updated_by") @db.VarChar(100)
+  deletedAt       DateTime?        @map("deleted_at")
+  leadEnrichments LeadEnrichment[]
 
   @@index([companyCnpj])
   @@map("leads")
+}
+
+model LeadEnrichment {
+  id             String            @id @default(uuid())
+  leadId         String            @map("lead_id")
+  lead           Lead              @relation(fields: [leadId], references: [id])
+  fullName       String?           @map("full_name") @db.VarChar(100)
+  email          String?           @map("email") @db.VarChar(255)
+  phone          String?           @map("phone") @db.VarChar(20)
+  companyName    String?           @map("company_name") @db.VarChar(150)
+  companyCnpj    String?           @map("company_cnpj") @db.VarChar(14)
+  companyWebsite String?           @map("company_website") @db.VarChar(255)
+  estimatedValue Decimal?          @map("estimated_value") @db.Decimal(12, 2)
+  source         lead_source?      @map("source")
+  notes          String?           @map("notes") @db.VarChar(500)
+  status         enrichment_status
+  requestedAt    DateTime          @default(now()) @map("requested_at")
+  completedAt    DateTime?         @map("completed_at")
+  rawData        Json?             @map("raw_data")
+  errorMessage   String?           @map("error_message") @db.VarChar(500)
+  createdAt      DateTime          @default(now()) @map("created_at")
+  createdBy      String?           @map("created_by") @db.VarChar(100)
+  updatedAt      DateTime          @updatedAt @map("updated_at")
+  updatedBy      String?           @map("updated_by") @db.VarChar(100)
+  deletedAt      DateTime?         @map("deleted_at")
+
+  @@index([leadId])
+  @@index([status])
+  @@map("lead_enrichments")
 }

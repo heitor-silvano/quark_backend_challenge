@@ -1,12 +1,16 @@
-import { Module } from "@nestjs/common";
-import { ClassificationModule } from "../modules/classification/classification.module";
-import { EnrichmentModule } from "../modules/enrichment/enrichment.module";
-import { WorkerService } from "./worker.service";
-import { EnrichmentService } from "../modules/enrichment/enrichment.service";
-import { ClassificationService } from "../modules/classification/classification.service";
+import { Module } from '@nestjs/common';
+import { EnrichmentModule } from '../modules/enrichment/enrichment.module';
+import { QueueModule } from '../queue/queue.module';
+import { PrismaService } from '../../prisma/prisma.service';
+import { ClassificationModule } from '../modules/classification/classification.module';
+import { LeadsModule } from '../modules/leads/leads.module';
+import { EnrichmentConsumer } from './consumers/enrichment.consumer';
+import { ClassificationConsumer } from './consumers/classification.consumer';
 
 @Module({
-  imports: [EnrichmentModule, ClassificationModule],
-  providers: [WorkerService, EnrichmentService, ClassificationService],
+  imports: [EnrichmentModule, QueueModule, ClassificationModule, LeadsModule],
+  providers: [PrismaService],
+  controllers: [EnrichmentConsumer, ClassificationConsumer],
 })
-export class WorkerModule {}
+export class WorkerModule {
+}
