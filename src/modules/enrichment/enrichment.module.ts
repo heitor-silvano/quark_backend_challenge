@@ -5,6 +5,7 @@ import { EnrichmentRepository } from './enrichment.repository';
 import { LeadsRepository } from '../leads/leads.repository';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { QueueModule } from '../../queue/queue.module';
+import { MockApiClient } from './mock-api.client';
 
 @Module({
   controllers: [],
@@ -15,6 +16,7 @@ import { QueueModule } from '../../queue/queue.module';
     EnrichmentRepository,
     LeadsRepository,
     PrismaService,
+    MockApiClient,
   ],
   exports: [EnrichmentService]
 })
