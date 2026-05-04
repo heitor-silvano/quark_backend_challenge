@@ -3,13 +3,9 @@
 > Sistema de gestão de leads com enriquecimento de dados e classificação por IA.
 > Leia o [CHALLENGE-DESCRIPTION.md](./CHALLENGE-DESCRIPTION.md) para entender o escopo completo.
 
----
-
 ## Requisitos
 
 - Docker + Docker Compose
-
----
 
 ## Setup
 
