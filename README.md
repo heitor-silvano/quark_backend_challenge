@@ -3,13 +3,9 @@
 > Sistema de gestão de leads com enriquecimento de dados e classificação por IA.
 > Leia o [CHALLENGE-DESCRIPTION.md](./CHALLENGE-DESCRIPTION.md) para entender o escopo completo.
 
----
-
 ## Requisitos
 
 - Docker + Docker Compose
-
----
 
 ## Setup
 
@@ -103,7 +99,7 @@ Lead
     └── modelUsed: nome e versão do modelo
 ```
 
-Cada enriquecimento e classificação gera um registro independente — o histórico é imutável e auditável.
+Cada enriquecimento e classificação gera um registro independente - o histórico é imutável e auditável.
 
 ## Arquitetura
 
@@ -141,4 +137,4 @@ graph TD
 
 **Soft delete** — leads removidos mantêm `deletedAt` preenchido e são excluídos de todas as queries, preservando a integridade referencial com os registros de enriquecimento e classificação.
 
-**Mock API dockerizada** — sobe junto com `docker compose up`, sem dependência externa. Recebe o CNPJ e retorna dados fictícios no formato da API real.
+**Mock API dockerizada** - sobe junto com `docker compose up`, sem dependência externa. Recebe o CNPJ e retorna dados fictícios no formato da API real.
