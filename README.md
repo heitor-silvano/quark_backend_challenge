@@ -5,58 +5,29 @@
 
 ## Requisitos
 
-- Node.js 20+
 - Docker + Docker Compose
 
 ## Setup
 
-### 1. Clone e instale as dependências
+### 1. Clone o repositório
 
 ```bash
-git clone https://github.com/seu-usuario/backend_challenge
-cd backend_challenge
-npm install
+git clone https://github.com/heitor-silvano/quark_backend_challenge
 ```
 
 ### 2. Configure as variáveis de ambiente
 
 ```bash
 cp .env.example .env
-cp .env.test.example .env.test
 ```
 
-### 3. Suba os serviços
+### 3. Suba tudo
 
 ```bash
-docker compose up -d
+docker compose up --build
 ```
 
-Isso sobe PostgreSQL, RabbitMQ, Ollama e a Mock API.
-
-### 4. Baixe o modelo de IA
-
-```bash
-docker exec ollama ollama pull tinyllama
-```
-
-### 5. Rode as migrations e o seed
-
-```bash
-npx prisma migrate deploy
-npx prisma db seed
-```
-
-### 6. Inicie a aplicação
-
-Em terminais separados:
-
-```bash
-# API
-npm run start:dev
-
-# Worker
-npm run start:worker
-```
+Isso sobe PostgreSQL, RabbitMQ, Ollama (com tinyllama), Mock API, API e Worker.
 
 A API estará disponível em `http://localhost:3000`.
 
@@ -158,12 +129,12 @@ graph TD
 
 ## Decisões técnicas
 
-**Duas filas separadas** - `leads_enrichment_queue` e `leads_classification_queue` isolam falhas entre os pipelines e permitem escalar os workers de forma independente.
+**Duas filas separadas** — `leads_enrichment_queue` e `leads_classification_queue` isolam falhas entre os pipelines e permitem escalar os workers de forma independente.
 
-**Histórico imutável** - reprocessar um lead sempre gera um novo registro. Nada é sobrescrito, o que permite comparar execuções e auditar falhas ao longo do tempo.
+**Histórico imutável** — reprocessar um lead sempre gera um novo registro. Nada é sobrescrito, o que permite comparar execuções e auditar falhas ao longo do tempo.
 
-**Classificação determinística** - o Ollama gera `score` e `justification`. `classification` e `commercialPotential` são derivados do score no código, evitando inconsistências do modelo.
+**Classificação determinística** — o Ollama gera `score` e `justification`. `classification` e `commercialPotential` são derivados do score no código, evitando inconsistências do modelo.
 
-**Soft delete** - leads removidos mantêm `deletedAt` preenchido e são excluídos de todas as queries, preservando a integridade referencial com os registros de enriquecimento e classificação.
+**Soft delete** — leads removidos mantêm `deletedAt` preenchido e são excluídos de todas as queries, preservando a integridade referencial com os registros de enriquecimento e classificação.
 
 **Mock API dockerizada** - sobe junto com `docker compose up`, sem dependência externa. Recebe o CNPJ e retorna dados fictícios no formato da API real.

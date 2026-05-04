@@ -33,6 +33,7 @@ services:
       - "11434:11434"
     volumes:
       - ollama_data:/root/.ollama
+    entrypoint: ["/bin/sh", "-c", "ollama serve & sleep 10 && ollama pull tinyllama && wait"]
 
 
   rabbitmq:
@@ -57,6 +58,47 @@ services:
       - "3001:3001"
     environment:
       PORT: 3001
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: leads-api
+    restart: always
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/backend_challenge
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
+      MOCK_API_URL: http://mock-api:3001
+      OLLAMA_URL: http://ollama:11434
+    depends_on:
+      - postgres
+      - rabbitmq
+      - mock-api
+      - ollama
+    command: >
+      sh -c "npx prisma migrate deploy && node dist/main"
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    container_name: leads-worker
+    restart: always
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/backend_challenge
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
+      MOCK_API_URL: http://mock-api:3001
+      OLLAMA_URL: http://ollama:11434
+    depends_on:
+      - postgres
+      - rabbitmq
+      - ollama
 
 volumes:
   postgres_data:
