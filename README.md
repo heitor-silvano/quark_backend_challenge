@@ -3,14 +3,10 @@
 > Sistema de gestão de leads com enriquecimento de dados e classificação por IA.
 > Leia o [CHALLENGE-DESCRIPTION.md](./CHALLENGE-DESCRIPTION.md) para entender o escopo completo.
 
----
-
 ## Requisitos
 
 - Node.js 20+
 - Docker + Docker Compose
-
----
 
 ## Setup
 
@@ -64,8 +60,6 @@ npm run start:worker
 
 A API estará disponível em `http://localhost:3000`.
 
----
-
 ## Testes
 
 ```bash
@@ -78,8 +72,6 @@ npm run test:integration
 # Todos
 npm run test:all
 ```
-
----
 
 ## Endpoints
 
@@ -118,8 +110,6 @@ GET    /leads/:id/classifications Histórico de classificações
 ?classificationStatus=FAILED
 ```
 
----
-
 ## Modelagem
 
 ```
@@ -139,8 +129,6 @@ Lead
 ```
 
 Cada enriquecimento e classificação gera um registro independente - o histórico é imutável e auditável.
-
----
 
 ## Arquitetura
 
@@ -167,8 +155,6 @@ graph TD
     Mock --> PG
     Ollama --> PG
 ```
-
----
 
 ## Decisões técnicas
 
